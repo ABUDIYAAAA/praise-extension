@@ -1,6 +1,9 @@
 import { useAuth } from "../context/Auth";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import React from "react";
+import FloatingBits from "../components/FloatingBits";
+import Glow from "../components/Glow";
 
 export default function AuthPage() {
   const { loginWithGitHub, loading, error, isAuthenticated } = useAuth();
@@ -17,35 +20,41 @@ export default function AuthPage() {
   const handleGitHubLogin = () => {
     setOauthInProgress(true);
     loginWithGitHub();
-
-    // Reset oauth in progress after timeout (in case window doesn't close properly)
     setTimeout(() => {
       setOauthInProgress(false);
-    }, 30000); // 30 seconds timeout
+    }, 30000);
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+    <div className="relative flex items-center justify-center min-h-[400px] min-w-[350px] max-w-[400px] bg-black p-0 shadow-2xl mx-auto overflow-hidden">
+      {/* FloatingBits background */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <FloatingBits />
+        <Glow />
+      </div>
+
+      {/* Auth Card */}
+      <div className="bg-gray-900/70 backdrop-blur-sm rounded-xl h-full p-6 w-3/4 max-w-sm transition-all flex flex-col justify-center items-center relative z-10 border border-gray-800 shadow-lg">
+        {/* Header */}
+        <div className="text-center mb-4 w-full">
+          <h1 className="text-lg font-semibold text-white mb-1">
             Welcome to Praise
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-400 text-xs">
             Sign in to track your development activity
           </p>
         </div>
 
         {/* Error Display */}
         {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm">
+          <div className="mb-3 p-2 bg-red-500/10 border border-red-500/40 text-red-300 rounded text-xs w-full text-center">
             {error}
           </div>
         )}
 
         {/* OAuth Progress Message */}
         {oauthInProgress && (
-          <div className="mb-4 p-3 bg-blue-100 border border-blue-400 text-blue-700 rounded-md text-sm text-center">
+          <div className="mb-3 p-2 bg-blue-500/10 border border-blue-400/40 text-blue-300 rounded text-xs w-full text-center">
             🔐 Please complete authentication in the popup window...
           </div>
         )}
@@ -54,14 +63,14 @@ export default function AuthPage() {
         <button
           onClick={handleGitHubLogin}
           disabled={loading || oauthInProgress}
-          className="w-full flex items-center justify-center bg-gray-900 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center bg-white text-gray-900 py-2 px-4 rounded-lg font-medium text-sm hover:bg-gray-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading || oauthInProgress ? (
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
           ) : (
             <>
               <svg
-                className="w-5 h-5 mr-3"
+                className="w-6 h-6 mr-3"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -72,7 +81,8 @@ export default function AuthPage() {
           )}
         </button>
 
-        <div className="mt-6 text-xs text-gray-500 text-center">
+        {/* Footer Note */}
+        <div className="mt-4 text-[11px] text-gray-400 text-center leading-snug w-full">
           <p>
             By signing in, you agree to connect your GitHub account and allow us
             to track your repository activity.
